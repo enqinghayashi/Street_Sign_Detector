@@ -8,42 +8,10 @@ Street View House Numbers (SVHN) competition on Tianchi.
 - Metric: Exact sequence accuracy (predicted string equals ground truth string).
 - GPU: 60 hours on Tianchi Notebook.
 
-Repo layout (lean)
-- data/           Local dataset (ignored by git). Keep structure you download.
-- checkpoints/    Trained weights (ignored).
-- outputs/        Predictions, submissions, logs (ignored).
-- README.md       This file.
-- requirements.txt Minimal dependencies to start.
-- LICENSE         MIT.
-
-Quickstart
-1) Python 3.10+ recommended.
-2) Create env and install deps:
-   - python -m venv .venv
-   - .venv\Scripts\activate (Windows) or source .venv/bin/activate (Linux/Mac)
-   - pip install -r requirements.txt
-3) Put datasets under data/ (do not commit). Example:
-   - data/images/... (train/val/test images)
-   - data/annotations.csv (if using a unified CSV; columns: image_path,x1,y1,w,h,label,set)
-4) Code will be added incrementally (baseline: crop digits by boxes, train digit classifier, decode by x-order). Use outputs/ for submissions.
-
-Team workflow (3 people)
+Team workflow 
 - Branching: main (protected), feature branches per task (feat/data, feat/model, feat/infra).
 - Reviews: open PRs into main, require 1 reviewer.
 - Issues: track tasks with labels (data, model, infra, eval, submit).
 - Style: black (line length 100) + isort; type hints where practical.
 
-Milestones
-- Week 1: Data verification + baseline plan.
-- Week 2: Digit classifier baseline + val eval pipeline.
-- Week 3: Hyperparams/augments + submission A.
-- Week 4+: Iteration, error analysis, submission B.
 
-Submission format
-- CSV with columns: image_name,label
-- label is the full predicted string per image (e.g., 3075)
-
-Notes
-- If competition provides a different annotation schema, unify it to a simple CSV with columns:
-  image_path,x1,y1,w,h,label,set
-- Avoid committing large files. Use Git LFS only if necessary.
