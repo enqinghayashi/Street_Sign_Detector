@@ -39,7 +39,7 @@ project/
   - mchar_val.json -> data/raw/annotations/
   - mchar_sample_submit_A.csv -> data/raw/sample_submit/
 
-## Quick start (no code)
+## Quick start
 1) Create a Python 3.9–3.11 env and install: torch+torchvision, numpy, pandas, opencv-python, matplotlib, albumentations, tqdm. (Optional: pytorch-lightning, omegaconf/hydra, wandb/tensorboard.)
 2) Sanity check data: open a few images, parse JSON, verify boxes and labels (0–9), ensure ~30k train, ~10k val, ~40k test A.
 3) Baseline plan:
@@ -52,5 +52,6 @@ project/
 Notes:
 - data, outputs, and models are ignored by Git. Keep only small configs/notebooks/code.
 - See data/mchar_data_list_0515.csv for file links and target locations.
+
 
 
