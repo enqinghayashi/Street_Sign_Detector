@@ -1,17 +1,56 @@
-# Tianchi SVHN Group Project (2025)
+# Street_Sign_Detector (SVHN Tianchi 531795)
 
-Street View House Numbers (SVHN) competition on Tianchi.
+- Competition: https://tianchi.aliyun.com/competition/entrance/531795
+- Task: Recognize all digits in each image (sequence-level accuracy).
+- Provided: images + bounding boxes + labels (train/val), boxes (test A).
 
-- Link: https://tianchi.aliyun.com/competition/entrance/531795
-- Data: Train 30k, Val 10k, TestA 40k, TestB 40k. Boxes + labels for train/val; boxes for test.
-- Task: Recognize all digits in each image (sequence).
-- Metric: Exact sequence accuracy (predicted string equals ground truth string).
-- GPU: 60 hours on Tianchi Notebook.
+## Folder layout
+project/
+- data/
+  - raw/
+    - train/            # unzip mchar_train.zip here
+    - val/              # unzip mchar_val.zip here
+    - test_a/           # unzip mchar_test_a.zip here
+    - annotations/      # put mchar_train.json + mchar_val.json here
+    - sample_submit/    # put mchar_sample_submit_A.csv here
+  - processed/          # optional: cached crops, tensors
+  - interim/            # optional: intermediate artifacts
+- src/                  # code
+- notebooks/            # exploratory notebooks
+- configs/              # training/inference configs
+- models/               # trained weights (ignored by git)
+- outputs/              # submissions, logs, figures (ignored by git)
 
-Team workflow 
-- Branching: main (protected), feature branches per task (feat/data, feat/model, feat/infra).
-- Reviews: open PRs into main, require 1 reviewer.
-- Issues: track tasks with labels (data, model, infra, eval, submit).
-- Style: black (line length 100) + isort; type hints where practical.
+## What to download (download all)
+- mchar_train.zip
+- mchar_train.json
+- mchar_val.zip
+- mchar_val.json
+- mchar_test_a.zip
+- mchar_sample_submit_A.csv
+
+## Where to place files
+- Unzip:
+  - mchar_train.zip -> data/raw/train/
+  - mchar_val.zip -> data/raw/val/
+  - mchar_test_a.zip -> data/raw/test_a/
+- Copy:
+  - mchar_train.json -> data/raw/annotations/
+  - mchar_val.json -> data/raw/annotations/
+  - mchar_sample_submit_A.csv -> data/raw/sample_submit/
+
+## Quick start (no code)
+1) Create a Python 3.9–3.11 env and install: torch+torchvision, numpy, pandas, opencv-python, matplotlib, albumentations, tqdm. (Optional: pytorch-lightning, omegaconf/hydra, wandb/tensorboard.)
+2) Sanity check data: open a few images, parse JSON, verify boxes and labels (0–9), ensure ~30k train, ~10k val, ~40k test A.
+3) Baseline plan:
+   - Crop characters by boxes (train/val).
+   - Train a 10-class digit classifier.
+   - For each image: sort boxes by left, predict digits, join as string.
+4) Validation: exact string-match accuracy on val.
+5) Inference: generate submission CSV (file_name,file_code) from test A and save to outputs/.
+
+Notes:
+- data, outputs, and models are ignored by Git. Keep only small configs/notebooks/code.
+- See data/mchar_data_list_0515.csv for file links and target locations.
 
 
