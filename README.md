@@ -8,7 +8,7 @@ Street View House Numbers (SVHN) competition on Tianchi.
 - Metric: Exact sequence accuracy (predicted string equals ground truth string).
 - GPU: 60 hours on Tianchi Notebook.
 
-Repo layout (lean)
+Repo layout
 - data/           Local dataset (ignored by git). Keep structure you download.
 - checkpoints/    Trained weights (ignored).
 - outputs/        Predictions, submissions, logs (ignored).
@@ -33,17 +33,6 @@ Team workflow (3 people)
 - Issues: track tasks with labels (data, model, infra, eval, submit).
 - Style: black (line length 100) + isort; type hints where practical.
 
-Milestones
-- Week 1: Data verification + baseline plan.
-- Week 2: Digit classifier baseline + val eval pipeline.
-- Week 3: Hyperparams/augments + submission A.
-- Week 4+: Iteration, error analysis, submission B.
-
 Submission format
 - CSV with columns: image_name,label
 - label is the full predicted string per image (e.g., 3075)
-
-Notes
-- If competition provides a different annotation schema, unify it to a simple CSV with columns:
-  image_path,x1,y1,w,h,label,set
-- Avoid committing large files. Use Git LFS only if necessary.
