@@ -45,7 +45,6 @@ How to Predict (Required)
   - Scans images and writes a TSV with columns:
     - image_name (relative path within the archive)
     - prediction (baseline placeholder)
-- Note: The included baseline emits a constant placeholder label "unknown". Replace logic in code/test/predict.py and code/train/train.py with your actual model.
 
 Paths
 - All file paths are relative to repository root in code.
@@ -62,4 +61,5 @@ Training Model
   - Read test data from ../tcdata
   - Write final TSV to ../prediction_result/result.tsv
   - Keep the result file format identical (image_name<TAB>prediction)
+
 
