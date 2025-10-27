@@ -1,57 +1,65 @@
-# Street_Sign_Detector (SVHN Tianchi 531795)
+# Street_Sign_Detector
 
-- Competition: https://tianchi.aliyun.com/competition/entrance/531795
-- Task: Recognize all digits in each image (sequence-level accuracy).
-- Provided: images + bounding boxes + labels (train/val), boxes (test A).
+- tcdata/: empty on submission; test data will be placed here.
+- user_data/: stores trained models and temporary/intermediate files.
+- prediction_result/: stores the final result file result.tsv.
+- code/: contains training and prediction code, and entry scripts (train.sh, test.sh).
 
-## Folder layout
-project/
-- data/
-  - raw/
-    - train/            # unzip mchar_train.zip here
-    - val/              # unzip mchar_val.zip here
-    - test_a/           # unzip mchar_test_a.zip here
-    - annotations/      # put mchar_train.json + mchar_val.json here
-    - sample_submit/    # put mchar_sample_submit_A.csv here
-  - processed/          # optional: cached crops, tensors
-  - interim/            # optional: intermediate artifacts
-- src/                  # code
-- notebooks/            # exploratory notebooks
-- configs/              # training/inference configs
-- models/               # trained weights (ignored by git)
-- outputs/              # submissions, logs, figures (ignored by git)
+Environment
+- OS: Linux or Windows
+- Python: 3.8+
+- Packages: standard library only (no extra packages required)
 
-## What to download (download all)
-- mchar_train.zip
-- mchar_train.json
-- mchar_val.zip
-- mchar_val.json
-- mchar_test_a.zip
-- mchar_sample_submit_A.csv
+Folder Structure
+- README.md
+- requirements.txt
+- tcdata/
+- user_data/
+  - model_data/
+  - tmp_data/
+- prediction_result/
+- code/
+  - train/
+    - train.py
+  - test/
+    - predict.py
+  - train.sh
+  - test.sh
 
-## Where to place files
-- Unzip:
-  - mchar_train.zip -> data/raw/train/
-  - mchar_val.zip -> data/raw/val/
-  - mchar_test_a.zip -> data/raw/test_a/
-- Copy:
-  - mchar_train.json -> data/raw/annotations/
-  - mchar_val.json -> data/raw/annotations/
-  - mchar_sample_submit_A.csv -> data/raw/sample_submit/
+How to Train
+- Fixed hyperparameters are embedded in code/train/train.py.
+- From repository root:
+  - bash code/train.sh
+- Output:
+  - user_data/model_data/model.json (toy baseline model metadata)
 
-## Quick start
-1) Create a Python 3.9–3.11 env and install: torch+torchvision, numpy, pandas, opencv-python, matplotlib, albumentations, tqdm. (Optional: pytorch-lightning, omegaconf/hydra, wandb/tensorboard.)
-2) Sanity check data: open a few images, parse JSON, verify boxes and labels (0–9), ensure ~30k train, ~10k val, ~40k test A.
-3) Baseline plan:
-   - Crop characters by boxes (train/val).
-   - Train a 10-class digit classifier.
-   - For each image: sort boxes by left, predict digits, join as string.
-4) Validation: exact string-match accuracy on val.
-5) Inference: generate submission CSV (file_name,file_code) from test A and save to outputs/.
+How to Predict (Required)
+- This is the official entrypoint.
+- From repository root:
+  - bash code/test.sh
+- Output:
+  - prediction_result/result.tsv
+- The script:
+  - Recursively searches for zip files under tcdata/ (e.g., tcdata/街景识别/test_a.zip, test_b.zip).
+  - Extracts them into user_data/tmp_data/extracted/.
+  - Scans images and writes a TSV with columns:
+    - image_name (relative path within the archive)
+    - prediction (baseline placeholder)
+- Note: The included baseline emits a constant placeholder label "unknown". Replace logic in code/test/predict.py and code/train/train.py with your actual model.
 
-Notes:
-- data, outputs, and models are ignored by Git. Keep only small configs/notebooks/code.
-- See data/mchar_data_list_0515.csv for file links and target locations.
+Paths
+- All file paths are relative to repository root in code.
+- No absolute paths are used in code execution.
 
+Reproducibility
+- No randomness used in the baseline.
+- No external data or internet access required.
 
+Training Model
+- Trained weights is under user_data/model_data/ (e.g., model.pth).
+- Implement real training in code/train/train.py.
+- Implement real inference in code/test/predict.py, ensuring you still:
+  - Read test data from ../tcdata
+  - Write final TSV to ../prediction_result/result.tsv
+  - Keep the result file format identical (image_name<TAB>prediction)
 
