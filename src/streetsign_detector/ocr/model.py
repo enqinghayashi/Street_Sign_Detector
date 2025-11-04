@@ -19,5 +19,16 @@ class OCRModel(nn.Module):
         # EfficientNet B0 final feature map size is 1280
         self.backbone = base
 
+        # 2. IMPROVEMENT: Bigger Bottleneck + BatchNorm
+        # We increase hidden size to 1024 (was 256) to keep more features
+        hidden_size = 1024
+
+        self.backbone.classifier = nn.Sequential(
+            nn.Dropout(0.3),                 # Increased dropout slightly
+            nn.Linear(1280, hidden_size),
+            nn.BatchNorm1d(hidden_size),     # NEW: Stabilizes training
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.3),
+        )
 
 
