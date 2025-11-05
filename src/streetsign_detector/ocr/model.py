@@ -37,3 +37,10 @@ class OCRModel(nn.Module):
             nn.Linear(hidden_size, NUM_CLASS + 1) for _ in range(MAX_LEN)
         ])
 
+    def forward(self, x):
+        # Extract features
+        feat = self.backbone(x)
+
+        # Pass through each head
+        out = [h(feat) for h in self.heads]
+        return out
