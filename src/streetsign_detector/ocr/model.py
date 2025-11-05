@@ -31,4 +31,9 @@ class OCRModel(nn.Module):
             nn.Dropout(0.3),
         )
 
+        # 3. Prediction Heads (5 heads for 5 characters)
+        # Each head outputs 11 classes (0-9 + Padding)
+        self.heads = nn.ModuleList([
+            nn.Linear(hidden_size, NUM_CLASS + 1) for _ in range(MAX_LEN)
+        ])
 
