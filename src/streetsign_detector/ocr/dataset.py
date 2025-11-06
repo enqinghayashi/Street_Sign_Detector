@@ -16,9 +16,18 @@ class MCharDataset(Dataset):
         if transform is not None:
 
           self.transform = transform
+        else:
+          normalize = transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]) # normalise the image
+
+          if mode == 'train':
+              self.transform = transforms.Compose([
+                  transforms.Resize((128, 128)), # resize to fixed size
 
 
 
+                  transforms.ToTensor(),
+                  normalize
+                ])
 
 
     def __len__(self):
