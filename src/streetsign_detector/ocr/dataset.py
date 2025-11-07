@@ -23,6 +23,11 @@ class MCharDataset(Dataset):
               self.transform = transforms.Compose([
                   transforms.Resize((128, 128)), # resize to fixed size
 
+                    # 1. Geometric random rotate (-10 to 10 degrees)
+                  transforms.RandomRotation(10),
+
+                    # 2. Geometric random shifting
+                  transforms.RandomAffine(degrees=0, translate=(0.05, 0.05), scale=(0.9, 1.1)),
 
 
                   transforms.ToTensor(),
