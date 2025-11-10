@@ -29,6 +29,11 @@ class MCharDataset(Dataset):
                     # 2. Geometric random shifting
                   transforms.RandomAffine(degrees=0, translate=(0.05, 0.05), scale=(0.9, 1.1)),
 
+                    # 3. Color and lighting changes (Day/Night/Shadows)
+                  transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4),
+
+                    # 4. blury
+                  transforms.RandomApply([transforms.GaussianBlur(kernel_size=3)], p=0.3),
 
                   transforms.ToTensor(),
                   normalize
