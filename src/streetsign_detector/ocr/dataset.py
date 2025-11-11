@@ -38,6 +38,13 @@ class MCharDataset(Dataset):
                   transforms.ToTensor(),
                   normalize
                 ])
+          else:
+                # only resize and normalize
+              self.transform = transforms.Compose([
+                  transforms.Resize((128, 128)),
+                  transforms.ToTensor(),
+                  normalize
+                ])
 
 
     def __len__(self):
