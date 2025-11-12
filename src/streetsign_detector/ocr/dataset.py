@@ -46,6 +46,38 @@ class MCharDataset(Dataset):
                   normalize
                 ])
 
+        # Load labels
+        with open(json_file, "r") as f:
+            self.meta = json.load(f)
+        self.keys = list(self.meta.keys())
+
+        # Detect if input is a ZIP file
+        self.is_zip = os.path.isfile(path) and (path.endswith('.zip') or zipfile.is_zipfile(path))
+
+        # Zip handling variables
+        self.zip_handle = None
+        self.prefix = ""
+
+        if self.is_zip:
+            # Figuring out if images are in a subfolder inside the zip
+            # e.g., mchar_train.zip -> mchar_train/000000.png
+            with zipfile.ZipFile(path, 'r') as zf:
+                names = zf.namelist()
+                sample_key = self.keys[0] # e.g. "000000.png"
+
+                if sample_key in names:
+                    self.prefix = ""
+                else:
+                    # Check common prefix like "mchar_train/"
+                    folder_name = os.path.basename(path).replace('.zip', '')
+                    if f"{folder_name}/{sample_key}" in names:
+                        self.prefix = f"{folder_name}/"
+                    else:
+                        # Fallback search
+                        for n in names[:100]:
+                            if n.endswith(sample_key):
+                                self.prefix = n[:-len(sample_key)]
+                                break
 
     def __len__(self):
         return len(self.keys)
