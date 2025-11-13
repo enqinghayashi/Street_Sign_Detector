@@ -82,3 +82,26 @@ class MCharDataset(Dataset):
     def __len__(self):
         return len(self.keys)
 
+    def __getitem__(self, idx):
+        name = self.keys[idx] # e.g., "000000.png"
+
+        if self.is_zip:
+            # Open zip in the worker process (thread-safe way)
+            if self.zip_handle is None:
+                self.zip_handle = zipfile.ZipFile(self.path, 'r')
+
+            try:
+                full_path = self.prefix + name
+                img_bytes = self.zip_handle.read(full_path)
+                img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+            except Exception:
+                # Return black image if file is corrupt/missing
+                img = Image.new('RGB', (128, 64))
+        else:
+            # Standard folder reading
+            img_path = os.path.join(self.path, name)
+            try:
+                img = Image.open(img_path).convert("RGB")
+            except:
+                img = Image.new('RGB', (128, 64))
+
