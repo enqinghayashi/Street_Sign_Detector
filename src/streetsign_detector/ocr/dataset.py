@@ -105,3 +105,12 @@ class MCharDataset(Dataset):
             except:
                 img = Image.new('RGB', (128, 64))
 
+        if self.transform:
+            img = self.transform(img)
+
+        labels = self.meta[name]["label"]
+        # Pad label with 10
+        if len(labels) < MAX_LEN:
+            labels = labels + [PADDING_TOKEN] * (MAX_LEN - len(labels))
+
+        return img, torch.tensor(labels[:MAX_LEN], dtype=torch.long)
