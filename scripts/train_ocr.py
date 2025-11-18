@@ -68,6 +68,25 @@ def train():
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
+    # --- DATASET LOADING ---
+    train_img = os.path.join(tcdata_dir, "mchar_train")
+    if not os.path.exists(train_img): train_img += ".zip"
+
+    val_img = os.path.join(tcdata_dir, "mchar_val")
+    if not os.path.exists(val_img): val_img += ".zip"
+
+    train_json = os.path.join(tcdata_dir, "mchar_train.json")
+    val_json = os.path.join(tcdata_dir, "mchar_val.json")
+
+    if not os.path.exists(train_json):
+        print(f"Dataset JSON not found at {train_json}")
+        return
+
+    train_set = MCharDataset(train_img, train_json, transform=train_tf)
+    val_set = MCharDataset(val_img, val_json, transform=val_tf)
+
+    train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.num_workers)
+    val_loader = DataLoader(val_set, batch_size=BATCH_SIZE, num_workers=args.num_workers)
 
 
 
