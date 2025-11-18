@@ -27,7 +27,46 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", default=str(REPO_ROOT / "user_data" / "model_data"), help="Where to save checkpoints")
     return parser.parse_args()
 
+def train():
+    args = parse_args()
 
+    # --- CONFIG ---
+    EPOCHS = args.epochs
+    BATCH_SIZE = args.batch_size
+    LR = args.lr
+
+    # NEW: Optimized Image Size (Height=64, Width=128)
+    # House numbers are wide. 64x128 is a very standard OCR resolution.
+    IMG_H, IMG_W = args.img_h, args.img_w
+
+    # Paths
+    tcdata_dir = args.tcdata
+    output_dir = args.output_dir
+    os.makedirs(output_dir, exist_ok=True)
+
+    resume_path = os.path.join(output_dir, "latest.pth")
+    best_model_path = os.path.join(output_dir, "model.dat")
+
+    # --- TRANSFORMS ---
+    # We use a slightly more aggressive augmentation
+    train_tf = transforms.Compose([
+        transforms.Resize((IMG_H, IMG_W)),
+        transforms.RandomAffine(
+            degrees=10,
+            translate=(0.1, 0.1),
+            scale=(0.8, 1.1),
+            shear=5  # Added shear
+        ),
+        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    val_tf = transforms.Compose([
+        transforms.Resize((IMG_H, IMG_W)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
 
 
 
