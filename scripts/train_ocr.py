@@ -95,6 +95,10 @@ def train():
     model = OCRModel().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
+    # Scheduler: Drop LR if validation loss stops improving
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.5, patience=3
+    )
 
 
 
