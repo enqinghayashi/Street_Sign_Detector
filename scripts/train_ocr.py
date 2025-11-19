@@ -88,6 +88,12 @@ def train():
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.num_workers)
     val_loader = DataLoader(val_set, batch_size=BATCH_SIZE, num_workers=args.num_workers)
 
+    # --- MODEL SETUP ---
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+
+    model = OCRModel().to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
 
 
