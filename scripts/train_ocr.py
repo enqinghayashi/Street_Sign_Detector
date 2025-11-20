@@ -104,6 +104,19 @@ def train():
     # This helps the model generalize better by not forcing 100% confidence
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
 
+    # --- RESUME LOGIC ---
+    start_epoch = 0
+    best_loss = float('inf')
+
+    if os.path.exists(resume_path):
+        print(f"Resuming from {resume_path}...")
+        checkpoint = torch.load(resume_path, map_location=device)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        start_epoch = checkpoint['epoch'] + 1
+        best_loss = checkpoint.get('best_loss', float('inf'))
+    else:
+        print("Starting training from scratch.")
 
 
 
