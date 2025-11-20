@@ -100,6 +100,9 @@ def train():
         optimizer, mode='min', factor=0.5, patience=3
     )
 
+    # NEW: Label Smoothing
+    # This helps the model generalize better by not forcing 100% confidence
+    loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
 
 
 
