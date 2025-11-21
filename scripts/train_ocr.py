@@ -118,6 +118,35 @@ def train():
     else:
         print("Starting training from scratch.")
 
+    # --- TRAINING LOOP ---
+    for epoch in range(start_epoch, EPOCHS):
+        model.train()
+        total_loss = 0
+
+        for i, (img, label) in enumerate(train_loader):
+            img, label = img.to(device), label.to(device)
+
+            optimizer.zero_grad()
+
+            # Forward
+            out = model(img) # list of 5 tensors
+            out_stack = torch.stack(out, dim=1) # [Batch, 5, 11]
+
+            # Compute loss
+            # Permute to [Batch, Classes, Seq_Len] for CrossEntropy
+            loss = loss_fn(out_stack.permute(0, 2, 1), label)
+
+            loss.backward()
+            optimizer.step()
+
+            total_loss += loss.item()
+
+            if i % 100 == 0:
+                print(f"\rEpoch {epoch} [{i}/{len(train_loader)}] Loss: {loss.item():.4f}", end="")
+
+        avg_loss = total_loss / len(train_loader)
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"\nEpoch {epoch} Avg Train Loss: {avg_loss:.4f} | LR: {current_lr:.1e}")
 
 
 
