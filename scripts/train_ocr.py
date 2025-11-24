@@ -148,6 +148,35 @@ def train():
         current_lr = optimizer.param_groups[0]['lr']
         print(f"\nEpoch {epoch} Avg Train Loss: {avg_loss:.4f} | LR: {current_lr:.1e}")
 
+        # --- VALIDATION ---
+        model.eval()
+        val_loss = 0
+        correct = 0
+        total = 0
+
+        with torch.no_grad():
+            for img, label in val_loader:
+                img, label = img.to(device), label.to(device)
+
+                out = model(img)
+                out_stack = torch.stack(out, dim=1)
+
+                loss = loss_fn(out_stack.permute(0, 2, 1), label)
+                val_loss += loss.item()
+
+                # Calculate simple accuracy (perfect match of all digits)
+                # preds: [Batch, 5]
+                preds = out_stack.argmax(dim=2)
+
+                # Check row by row equality
+                # eq: [Batch, 5] -> all(dim=1) -> [Batch] boolean
+                row_match = torch.all(preds.eq(label), dim=1)
+                correct += row_match.sum().item()
+                total += label.size(0)
+
+        avg_val_loss = val_loss / len(val_loader)
+        val_acc = correct / total
+        print(f"Validation Loss: {avg_val_loss:.4f} | Acc: {val_acc:.4f}")
 
 
 if __name__ == "__main__":
