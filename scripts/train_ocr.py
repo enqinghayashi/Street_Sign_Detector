@@ -178,6 +178,22 @@ def train():
         val_acc = correct / total
         print(f"Validation Loss: {avg_val_loss:.4f} | Acc: {val_acc:.4f}")
 
+        scheduler.step(avg_val_loss)
+
+        # --- SAVE CHECKPOINTS ---
+        # We save if validation loss improves
+        if avg_val_loss < best_loss:
+            best_loss = avg_val_loss
+            print(f">>> Found Better Model (Loss: {best_loss:.4f}). Saving...")
+            torch.save(model.state_dict(), best_model_path)
+
+        # Always save latest for resuming
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'best_loss': best_loss
+        }, resume_path)
 
 if __name__ == "__main__":
     train()
