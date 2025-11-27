@@ -37,6 +37,34 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--num-workers", type=int, default=2)
     return parser.parse_args()
 
+def predict():
+    args = parse_args()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+
+    # Paths
+    model_path = args.model_path
+    zip_file = args.test_zip
+
+    if not os.path.exists(zip_file):
+        raise FileNotFoundError(f"Test zip not found: {zip_file}")
+
+    # Load Model
+    model = OCRModel().to(device)
+    if not os.path.exists(model_path):
+        print("Error: Model file not found. Train first.")
+        return
+
+    checkpoint = torch.load(model_path, map_location=device)
+
+    # Flexible loading (handle if saved as full dict or just weights)
+    if 'model_state_dict' in checkpoint:
+        model.load_state_dict(checkpoint['model_state_dict'])
+    else:
+        model.load_state_dict(checkpoint)
+
+    model.eval()
 
 
 
