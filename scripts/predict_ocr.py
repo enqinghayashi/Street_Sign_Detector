@@ -66,6 +66,12 @@ def predict():
 
     model.eval()
 
+    # Dataset
+    test_set = ZipTestDataset(zip_file)
+    loader = DataLoader(test_set, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+
+    results = []
+    print(f"Inference on {len(test_set)} images...")
 
 
 
