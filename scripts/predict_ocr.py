@@ -73,6 +73,16 @@ def predict():
     results = []
     print(f"Inference on {len(test_set)} images...")
 
+    with torch.no_grad():
+        for i, (img, names) in enumerate(loader):
+            img = img.to(device)
+
+            # Forward
+            out = model(img) # List of 5 tensors
+            out_stack = torch.stack(out, dim=1) # [Batch, 5, 11]
+
+            # Greedy Decode
+            preds = out_stack.argmax(dim=2).cpu().numpy()
 
 
 if __name__ == "__main__":
