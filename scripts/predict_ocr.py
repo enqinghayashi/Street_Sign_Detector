@@ -84,6 +84,10 @@ def predict():
             # Greedy Decode
             preds = out_stack.argmax(dim=2).cpu().numpy()
 
+            for filename, seq in zip(names, preds):
+                # Filter padding (token 10)
+                pred_str = "".join([str(x) for x in seq if x != PADDING_TOKEN])
+                results.append(f"{filename},{pred_str}")
 
 if __name__ == "__main__":
     predict()
