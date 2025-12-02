@@ -89,5 +89,18 @@ def predict():
                 pred_str = "".join([str(x) for x in seq if x != PADDING_TOKEN])
                 results.append(f"{filename},{pred_str}")
 
+            if i % 20 == 0:
+                print(f"\rBatch {i}/{len(loader)}", end="")
+
+    # Save
+    out_file = args.output_csv
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
+
+    with open(out_file, "w") as f:
+        f.write("file_name,file_code\n")
+        f.write("\n".join(results))
+
+    print(f"\nDone. Saved to {out_file}")
+
 if __name__ == "__main__":
     predict()
