@@ -53,6 +53,31 @@ class SingleDigitCropDataset(Dataset):
     def __len__(self):
         return len(self.samples)
 
+    def __getitem__(self, idx):
+        if self.zip_handle is None:
+            self.zip_handle = zipfile.ZipFile(self.zip_path, 'r')
+            
+        filename, (x, y, w, h), label = self.samples[idx]
+        
+        # Read Image from Zip
+        # Check if file is in folder (e.g. "mchar_train/000000.png")
+        try:
+            data = self.zip_handle.read(filename)
+        except KeyError:
+            # Fallback for folder inside zip
+            data = self.zip_handle.read(f"mchar_train/{filename}")
+            
+        img = Image.open(io.BytesIO(data)).convert("RGB")
+        
+        # Crop the digit
+        # Add a tiny bit of padding (optional, helps context)
+        img_w, img_h = img.size
+        crop = img.crop((max(0, x), max(0, y), min(img_w, x+w), min(img_h, y+h)))
+        
+        if self.transform:
+            crop = self.transform(crop)
+            
+        return crop, label
 
 
 
