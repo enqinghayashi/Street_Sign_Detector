@@ -14,6 +14,20 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Train EfficientNet-B0 single-digit reader (digit crops from JSON boxes).")
+    parser.add_argument("--train-zip", default=str(REPO_ROOT / "tcdata" / "mchar_train.zip"), help="Path to mchar_train.zip")
+    parser.add_argument("--train-json", default=str(REPO_ROOT / "tcdata" / "mchar_train.json"), help="Path to mchar_train.json")
+    parser.add_argument(
+        "--output",
+        default=str(REPO_ROOT / "user_data" / "model_data" / "single_digit_best.pth"),
+        help="Where to save the trained weights.",
+    )
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--num-workers", type=int, default=2)
+    return parser.parse_args()
 
 # Dataset extraction into single digit samples
 class SingleDigitCropDataset(Dataset):
@@ -98,6 +112,19 @@ def get_reader_model():
     return model
 
 # Trainin logic
+def train_reader():
+    args = parse_args()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Training on: {device}")
+
+    train_zip = args.train_zip
+    train_json = args.train_json
+    output_path = args.output
+
+    if not os.path.exists(train_zip):
+        raise FileNotFoundError(f"Train zip not found: {train_zip}")
+    if not os.path.exists(train_json):
+        raise FileNotFoundError(f"Train JSON not found: {train_json}")
 
 
 if __name__ == "__main__":
