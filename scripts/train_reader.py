@@ -88,6 +88,14 @@ train_tf = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
+# Model
+def get_reader_model():
+    model = models.efficientnet_b0(weights='DEFAULT')
+    # Change classifier for 10 classes (0-9)
+    # EfficientNet B0 classifier layer structure:
+    # (1): Linear(in_features=1280, out_features=1000, bias=True)
+    model.classifier[1] = nn.Linear(1280, 10) 
+    return model
 
 # Trainin logic
 
