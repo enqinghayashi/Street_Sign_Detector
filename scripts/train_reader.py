@@ -126,6 +126,47 @@ def train_reader():
     if not os.path.exists(train_json):
         raise FileNotFoundError(f"Train JSON not found: {train_json}")
 
+    # Setup data
+    dataset = SingleDigitCropDataset(train_json, train_zip, transform=train_tf)
+    dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
+    
+    # Setup model
+    model = get_reader_model().to(device)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    criterion = nn.CrossEntropyLoss()
+    
+    print("Starting Training of The Reader (EfficientNet)...")
+    
+    for epoch in range(args.epochs):
+        model.train()
+        running_loss = 0.0
+        correct = 0
+        total = 0
+        
+        for i, (imgs, labels) in enumerate(dataloader):
+            imgs, labels = imgs.to(device), labels.to(device)
+            
+            optimizer.zero_grad()
+            outputs = model(imgs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            
+            running_loss += loss.item()
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+            
+            if i % 100 == 0:
+                print(f"Epoch [{epoch+1}/{args.epochs}] Step [{i}/{len(dataloader)}] Loss: {loss.item():.4f}")
+                
+        acc = 100 * correct / total
+        print(f"Epoch {epoch+1} Finished. Avg Loss: {running_loss/len(dataloader):.4f} | Acc: {acc:.2f}%")
+        
+        # Save every epoch
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        torch.save(model.state_dict(), output_path)
+        print(f"Saved checkpoint to {output_path}")
 
 if __name__ == "__main__":
     # Ensure directory exists
