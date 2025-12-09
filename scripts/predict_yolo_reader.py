@@ -43,6 +43,11 @@ def parse_args() -> argparse.Namespace:
     )
     return parser.parse_args()
 
+def get_reader_model():
+    model = models.efficientnet_b0(weights=None) # We load our own weights here
+    # Replace the final layer to match our 10-class training
+    model.classifier[1] = nn.Linear(1280, 10) 
+    return model
 
 
 
