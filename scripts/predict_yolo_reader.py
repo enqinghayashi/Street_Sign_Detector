@@ -49,6 +49,14 @@ def get_reader_model():
     model.classifier[1] = nn.Linear(1280, 10) 
     return model
 
+# Transforms 
+reader_tf = transforms.Compose(
+    [
+        transforms.Resize((128, 128)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ]
+)
 
 
     
