@@ -59,6 +59,13 @@ reader_tf = transforms.Compose(
 )
 
 
+# Pipeline Logics: YOLO then EfficiencyNet Classification
+def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Module, device: torch.device, iou: float, conf: float | None):
+    # 1. YOLO Detection
+    kwargs = {"verbose": False, "iou": iou}
+    if conf is not None:
+        kwargs["conf"] = conf
+    results = yolo_model(pil_img, **kwargs)
     
     
         
