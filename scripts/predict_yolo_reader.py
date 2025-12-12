@@ -68,6 +68,24 @@ def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Mo
     results = yolo_model(pil_img, **kwargs)
     
     
+    boxes = results[0].boxes.xyxy.cpu().numpy()
+    
+    detections = []
+    img_w, img_h = pil_img.size
+    
+    # 2. Crop and Read
+    for box in boxes:
+        x1, y1, x2, y2 = map(int, box)
+        
+        # Clip coordinates to image bounds
+        x1, y1 = max(0, x1), max(0, y1)
+        x2, y2 = min(img_w, x2), min(img_h, y2)
+        
+        if x2 <= x1 or y2 <= y1:
+            continue
+            
+        # Crop
+        crop = pil_img.crop((x1, y1, x2, y2))
         
     
     
