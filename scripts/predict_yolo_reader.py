@@ -107,6 +107,9 @@ def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Mo
     # 3. Sort Left-to-Right
     detections.sort(key=lambda x: x["x_center"])
     
+    # Concatenate
+    final_str = "".join(str(d["digit"]) for d in detections)
+    return final_str
 
 # Main
     
