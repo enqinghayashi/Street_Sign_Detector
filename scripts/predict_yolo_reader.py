@@ -101,6 +101,11 @@ def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Mo
             "x_center": (x1 + x2) / 2
         })
     
+    if not detections:
+        return ""
+        
+    # 3. Sort Left-to-Right
+    detections.sort(key=lambda x: x["x_center"])
     
 
 # Main
