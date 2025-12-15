@@ -87,6 +87,19 @@ def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Mo
         # Crop
         crop = pil_img.crop((x1, y1, x2, y2))
         
+        # Preprocess for EfficientNet
+        input_tensor = reader_tf(crop).unsqueeze(0).to(device)
+        
+        # Inference
+        with torch.no_grad():
+            output = reader_model(input_tensor)
+            _, pred = torch.max(output, 1)
+            digit = pred.item()
+            
+        detections.append({
+            "digit": digit,
+            "x_center": (x1 + x2) / 2
+        })
     
     
 
