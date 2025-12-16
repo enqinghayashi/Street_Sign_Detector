@@ -114,8 +114,48 @@ def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Mo
     return final_str
 
 # Main
-    
+def main():
+    args = parse_args()
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Running on: {device}")
+
+    
+    # Open Zip and iterate
+    with zipfile.ZipFile(args.test_zip, 'r') as zf:
+        # Filter for valid images only
+        file_list = [f for f in zf.namelist() if f.lower().endswith(('.png', '.jpg', '.jpeg')) and not f.startswith('__MACOSX')]
+        file_list = sorted(file_list) # Sort filenames just in case
+        
+        total = len(file_list)
+        print(f"Found {total} images. Starting Inference...")
+        
+        for i, filename in enumerate(file_list):
+            # Read bytes
+            img_data = zf.read(filename)
+            img = Image.open(io.BytesIO(img_data)).convert("RGB")
+            
+            # Predict
+            pred_str = predict_image(
+                pil_img=img,
+                yolo_model=yolo_model,
+                reader_model=reader_model,
+                device=device,
+                iou=float(args.iou),
+                conf=args.conf,
+            )
+            
+            # Clean filename (remove folder prefix if exists)
+            clean_name = os.path.basename(filename)
+            results.append(f"{clean_name},{pred_str}")
+            
+
+    # Save result.csv
+    with open(args.output_csv, "w") as f:
+        f.write("file_name,file_code\n")
+        f.write("\n".join(results))
+        
+    print(f"\nDONE! Results saved to: {args.output_csv}")
 
 if __name__ == "__main__":
     main()
