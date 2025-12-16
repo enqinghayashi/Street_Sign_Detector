@@ -67,6 +67,8 @@ def predict_image(*, pil_img: Image.Image, yolo_model: YOLO, reader_model: nn.Mo
         kwargs["conf"] = conf
     results = yolo_model(pil_img, **kwargs)
     
+    if len(results) == 0 or results[0].boxes is None or len(results[0].boxes) == 0:
+        return ""
     
     boxes = results[0].boxes.xyxy.cpu().numpy()
     
