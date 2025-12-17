@@ -120,6 +120,25 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running on: {device}")
 
+    if not os.path.exists(args.test_zip):
+        raise FileNotFoundError(f"Test zip not found: {args.test_zip}")
+    if not os.path.exists(args.yolo_weights):
+        raise FileNotFoundError(f"YOLO weights not found: {args.yolo_weights}")
+    if not os.path.exists(args.reader_weights):
+        raise FileNotFoundError(f"Reader weights not found: {args.reader_weights}")
+
+    print("Loading models...")
+    yolo_model = YOLO(args.yolo_weights)
+
+    reader_model = get_reader_model().to(device)
+    reader_model.load_state_dict(torch.load(args.reader_weights, map_location=device))
+    reader_model.eval()
+
+    results = []
+    
+    os.makedirs(os.path.dirname(args.output_csv), exist_ok=True)
+    
+    print(f"Reading from {args.test_zip}...")
     
     # Open Zip and iterate
     with zipfile.ZipFile(args.test_zip, 'r') as zf:
@@ -149,6 +168,8 @@ def main():
             clean_name = os.path.basename(filename)
             results.append(f"{clean_name},{pred_str}")
             
+            if i % 100 == 0:
+                print(f"Processing {i}/{total} | Last: {clean_name} -> {pred_str}")
 
     # Save result.csv
     with open(args.output_csv, "w") as f:
