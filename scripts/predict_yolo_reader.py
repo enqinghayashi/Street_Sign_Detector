@@ -41,6 +41,8 @@ def parse_args() -> argparse.Namespace:
         default=str(REPO_ROOT / "prediction_result" / "result.csv"),
         help="Where to write the CSV results.",
     )
+    parser.add_argument("--iou", type=float, default=0.35, help="YOLO IoU threshold.")
+    parser.add_argument("--conf", type=float, default=None, help="Optional YOLO confidence threshold.")
     return parser.parse_args()
 
 def get_reader_model():
