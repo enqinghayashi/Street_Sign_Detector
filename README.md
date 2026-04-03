@@ -69,9 +69,6 @@ The script writes a CSV with header `file_name,file_code`.
 - Expects: `user_data/model_data/model.dat`
 - Writes: `prediction_result/result.csv`
 
-## Notes for GitHub
 
-- Don’t push large generated folders (virtualenvs, datasets, `runs/`, outputs). Use `.gitignore` or Git LFS for large weights.
-- If you want, I can add a clean `.gitignore` + optional Git LFS setup before we push.
 
 
