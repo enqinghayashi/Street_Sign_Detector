@@ -13,6 +13,7 @@ venv/
 ENV/
 env/
 *.ipynb_checkpoints/
+CV/
 
 # ========================
 # IDE / OS Files
@@ -107,3 +108,8 @@ results/
 *.png
 *.bmp
 *.gif
+
+# Allow curated weights to be tracked
+!weights/
+!weights/*.pt
+!weights/*.pth

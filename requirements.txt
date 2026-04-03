@@ -1,1 +1,11 @@
-# No external dependencies required. Python 3.8+ standard library only.
+# Core ML stack
+torch
+torchvision
+
+# YOLO (Ultralytics)
+ultralytics
+
+# Utilities
+Pillow
+tqdm
+numpy

@@ -1,65 +1,74 @@
-# Street_Sign_Detector
+# Street Sign Detector (YOLO + EfficientNet Fusion)
 
-- tcdata/: empty on submission; test data will be placed here.
-- user_data/: stores trained models and temporary/intermediate files.
-- prediction_result/: stores the final result file result.tsv.
-- code/: contains training and prediction code, and entry scripts (train.sh, test.sh).
+This project detects and reads multi-digit street/house-number signs using a two-stage pipeline:
 
-Environment
-- OS: Linux or Windows
-- Python: 3.8+
-- Packages: standard library only (no extra packages required)
+1) **YOLO (Ultralytics)** detects digit bounding boxes.
+2) **EfficientNet-B0** classifies each cropped digit, then digits are sorted left-to-right and concatenated.
 
-Folder Structure
-- README.md
-- requirements.txt
-- tcdata/
-- user_data/
-  - model_data/
-  - tmp_data/
-- prediction_result/
-- code/
-  - train/
-    - train.py
-  - test/
-    - predict.py
-  - train.sh
-  - test.sh
+An alternative baseline also exists: a single EfficientNet backbone with **5 classification heads** (predicts up to 5 digits, padded), trained end-to-end as `OCRModel`.
 
-How to Train
-- Fixed hyperparameters are embedded in code/train/train.py.
-- From repository root:
-  - bash code/train.sh
-- Output:
-  - user_data/model_data/model.json (toy baseline model metadata)
+## Repository Layout
 
-How to Predict (Required)
-- This is the official entrypoint.
-- From repository root:
-  - bash code/test.sh
-- Output:
-  - prediction_result/result.tsv
-- The script:
-  - Recursively searches for zip files under tcdata/ (e.g., tcdata/街景识别/test_a.zip, test_b.zip).
-  - Extracts them into user_data/tmp_data/extracted/.
-  - Scans images and writes a TSV with columns:
-    - image_name (relative path within the archive)
-    - prediction (baseline placeholder)
-- Note: The included baseline emits a constant placeholder label "unknown". Replace logic in code/test/predict.py and code/train/train.py with your actual model.
+- src/streetsign_detector/: importable Python package (models/datasets)
+- scripts/: runnable entrypoints for training and inference
+- notebooks/: exploration + training notebooks (moved from the old code/ folder)
+- tcdata/: dataset inputs (zips/json) (typically **not committed**)
+- user_data/model_data/: trained weights/checkpoints
+- runs/: Ultralytics training outputs (YOLO weights typically live under runs/detect/...)
+- prediction_result/: CSV outputs
+- weights/: misc pretrained weights (e.g., yolov8n.pt)
 
-Paths
-- All file paths are relative to repository root in code.
-- No absolute paths are used in code execution.
+The old `code/` folder is kept as **compatibility wrappers** so older commands still run.
 
-Reproducibility
-- No randomness used in the baseline.
-- No external data or internet access required.
+## Setup
 
-Training Model
-- Trained weights is under user_data/model_data/ (e.g., model.pth).
-- Implement real training in code/train/train.py.
-- Implement real inference in code/test/predict.py, ensuring you still:
-  - Read test data from ../tcdata
-  - Write final TSV to ../prediction_result/result.tsv
-  - Keep the result file format identical (image_name<TAB>prediction)
+- Python: 3.10+ recommended
+- Install deps:
+  - `pip install -r requirements.txt`
+
+If you run scripts directly (without installing as a package), they already bootstrap `src/` onto `sys.path`.
+
+## Training
+
+### A) Train the single-digit EfficientNet reader
+
+Trains EfficientNet-B0 on digit crops derived from `tcdata/mchar_train.json` + `tcdata/mchar_train.zip`.
+
+- `python scripts/train_reader.py`
+- Output: `user_data/model_data/single_digit_best.pth`
+
+### B) Train the multi-head OCRModel (optional)
+
+Trains an EfficientNet-based model that predicts a 5-digit sequence directly.
+
+- `python scripts/train_ocr.py`
+- Output: `user_data/model_data/model.dat` (best) and `user_data/model_data/latest.pth` (resume)
+
+### C) Train YOLO
+
+YOLO training is currently driven from the notebooks under `notebooks/training/` (Ultralytics).
+After training, set `--yolo-weights` to the produced `best.pt`.
+
+## Inference
+
+### Recommended: YOLO detector + EfficientNet reader
+
+- `python scripts/predict_yolo_reader.py \
+    --test-zip tcdata/mchar_test_a.zip \
+    --yolo-weights runs/detect/number_v8/weights/best.pt \
+    --reader-weights user_data/model_data/single_digit_best.pth \
+    --output-csv prediction_result/result.csv`
+
+The script writes a CSV with header `file_name,file_code`.
+
+### Alternative: OCRModel (no YOLO)
+
+- `python scripts/predict_ocr.py`
+- Expects: `user_data/model_data/model.dat`
+- Writes: `prediction_result/result.csv`
+
+## Notes for GitHub
+
+- Don’t push large generated folders (virtualenvs, datasets, `runs/`, outputs). Use `.gitignore` or Git LFS for large weights.
+- If you want, I can add a clean `.gitignore` + optional Git LFS setup before we push.
 
