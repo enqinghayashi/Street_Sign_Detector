@@ -1,13 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
-# Run from repo root regardless of current dir
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+# Legacy entrypoint wrapper (kept for backward compatibility)
+# Runs the recommended YOLO + reader pipeline.
 
-cd "${REPO_ROOT}"
-
-# Ensure output dir exists and run prediction
-python3 code/test/predict.py
-
-echo "[INFO] Done. result.tsv is in prediction_result/"
+python code/test/predict.py

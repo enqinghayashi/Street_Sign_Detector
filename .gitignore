@@ -1,0 +1,115 @@
+# ========================
+# Python & Environment
+# ========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.env
+.venv/
+venv/
+ENV/
+env/
+*.ipynb_checkpoints/
+CV/
+
+# ========================
+# IDE / OS Files
+# ========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# ========================
+# Logs & Outputs
+# ========================
+*.log
+*.out
+*.err
+*.pid
+*.gz
+*.zip
+*.tar
+*.tar.gz
+
+# ========================
+# Machine Learning Data
+# ========================
+# Datasets, CSVs, images, etc.
+data/
+datasets/
+tcdata/
+*.csv
+*.tsv
+*.xlsx
+*.json
+*.xml
+*.npy
+*.npz
+*.pkl
+*.h5
+*.hdf5
+
+# ========================
+# Model Checkpoints & Results
+# ========================
+checkpoints/
+models/
+outputs/
+runs/
+saved_models/
+results/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.tflite
+*.pb
+
+# ========================
+# Temporary or Generated Files
+# ========================
+*.tmp
+*.bak
+*.swp
+*.log
+*.dat
+*.bin
+*.cache
+*.txt~
+*.bak~
+*.tmp~
+
+# ========================
+# Notebooks & Reports
+# ========================
+*.ipynb_checkpoints/
+*.nbconvert/
+*.nb.html
+
+# ========================
+# Misc
+# ========================
+*.exe
+*.dll
+*.db
+*.sqlite
+*.sqlite3
+*.mp4
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.gif
+
+# Allow curated weights to be tracked
+!weights/
+!weights/*.pt
+!weights/*.pth

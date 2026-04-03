@@ -1,11 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+# Legacy entrypoint wrapper (kept for backward compatibility)
+# Runs the OCR training wrapper.
 
-cd "${REPO_ROOT}"
-
-python3 code/train/train.py
-
-echo "[INFO] Training placeholder complete. Model artifacts in user_data/model_data/"
+python code/train/train.py
